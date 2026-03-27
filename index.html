@@ -15,7 +15,9 @@
             font-family: -apple-system, system-ui, sans-serif;
             background-color: var(--bg-current);
             margin: 0;
+            /* Use svh (Small Viewport Height) to prevent iPhone shift */
             height: 100vh;
+            height: 100svh; 
             width: 100vw;
             display: flex;
             flex-direction: column;
@@ -34,6 +36,8 @@
             backdrop-filter: blur(8px);
             z-index: 20;
             flex-shrink: 0;
+            /* Account for iPhone Notch */
+            padding-top: env(safe-area-inset-top);
         }
 
         .stat-box { background: white; padding: 4px 8px; border-radius: 6px; min-width: 60px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: bold; font-size: 0.85rem;}
@@ -49,14 +53,16 @@
             z-index: 15;
         }
 
-        /* Fixed Centering Logic */
         #main-stage {
             position: relative;
-            flex-grow: 1;
+            flex: 1;
             width: 100%;
             display: flex;
+            flex-direction: column; /* Changed to column to help vertical centering */
             justify-content: center;
-            align-items: center; /* This is the primary vertical center */
+            align-items: center;
+            /* Ensures space for bottom home bar on iPhone */
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         #game-container {
@@ -66,8 +72,8 @@
             padding: 5px;
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            /* Ensure it stays perfectly centered and doesn't shift */
-            margin: auto; 
+            /* Important: Removes any default margins that might cause offset */
+            margin: 0 auto; 
         }
 
         .tile {
@@ -126,8 +132,9 @@
     </div>
 
     <div id="overlay">
-        <h1>Gabor Patch Trainer </p>蓋博符號視力回復遊戲</h1>
-	<h2>3分鐘視力強化</h2>
+        <h1>Gabor Patch Trainer</h1>
+        <h2>蓋博符號視力回復遊戲</h2>
+        <p>3分鐘視力強化</p>
         <button onclick="startGame()">開始訓練</button>
     </div>
 
@@ -174,7 +181,6 @@
         }
 
         function initLevel(isFirstLoad = false) {
-            // Only change color on new levels, not on overtime resize
             if (!isOvertime || isFirstLoad) {
                 document.body.style.backgroundColor = getRandomPastel();
             }
@@ -183,12 +189,14 @@
             container.innerHTML = '';
             const config = getLevelConfig();
             
-            // Height calculation: Subtract header (60) and padding
+            // Refined height calculation for iPhone centering
             const winW = window.innerWidth;
-            const winH = window.innerHeight - (isOvertime ? 110 : 70); 
+            const headerHeight = document.getElementById('header').offsetHeight;
+            const overtimeHeight = isOvertime ? document.getElementById('overtime-msg').offsetHeight : 0;
+            const winH = window.innerHeight - headerHeight - overtimeHeight - 20;
 
             const maxTileW = (winW * 0.86) / config.cols;
-            const maxTileH = (winH * 0.80) / config.rows;
+            const maxTileH = (winH * 0.84) / config.rows;
             const finalPx = Math.floor(Math.min(maxTileW, maxTileH));
 
             container.style.gridTemplateColumns = `repeat(${config.cols}, ${finalPx}px)`;
@@ -241,7 +249,7 @@
                 isOvertime = true;
                 document.getElementById('timer').style.color = 'red';
                 document.getElementById('overtime-msg').style.display = 'block';
-                // Note: We do NOT re-init the level here so the current board stays.
+                // Current board is KEPT. No initLevel() called here.
             }
         }
 
