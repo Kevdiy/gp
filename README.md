@@ -2,11 +2,7 @@
 Gabor patch training Game
 (Eyes & brain trainng in Traditional Chinese display)
 
-This game can be added to your mobile device "Main Screen" and you can be play it offline
-This is a basic vesion for children and elderly, advanced version can be found at here http://kevdiy.github.io/gp2
-
 This game can be added to your mobile device's "Home Screen," allowing you to play it offline. This is a basic version designed for children and the elderly. An advanced version is available at here http://kevdiy.github.io/gp2
-
 
  
 了解我們的眼睛和大腦是如何工作的
